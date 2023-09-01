@@ -47,6 +47,9 @@ workflow GatherSampleEvidenceBatch {
     Array[Float]? total_reads
     Array[Int]? pf_reads_improper_pairs
 
+    # Scramble inputs
+    Int? scramble_part2_threads
+
     # Wham inputs
     File wham_include_list_bed_file
 
@@ -125,6 +128,7 @@ workflow GatherSampleEvidenceBatch {
         pct_chimeras = if defined(pct_chimeras) then select_first([pct_chimeras])[i] else NONE_FLOAT_,
         total_reads = if defined(total_reads) then select_first([total_reads])[i] else NONE_FLOAT_,
         pf_reads_improper_pairs = if defined(pf_reads_improper_pairs) then select_first([pf_reads_improper_pairs])[i] else NONE_INT_,
+        scramble_part2_threads=scramble_part2_threads,
         wham_include_list_bed_file = wham_include_list_bed_file,
         run_module_metrics = run_module_metrics_,
         sv_pipeline_base_docker = sv_pipeline_base_docker,
