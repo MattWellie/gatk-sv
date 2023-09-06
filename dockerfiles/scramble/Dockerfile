@@ -65,7 +65,7 @@ RUN mkdir /app && cd /app \
 
 # test
 RUN Rscript --vanilla /app/scramble-gatk-sv/cluster_analysis/bin/SCRAMble.R --help
-RUN Rscript --vanilla /app/scramble-gatk-sv/cluster_analysis/bin/cluster_identifier -v
+RUN Rscript --vanilla /app/scramble-gatk-sv/cluster_identifier/src/build/cluster_identifier -v
 
 # define default command
 CMD ["Rscript"]
