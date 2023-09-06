@@ -231,6 +231,8 @@ workflow GatherSampleEvidence {
         bam_or_cram_index = reads_index_,
         sample_name = sample_id,
         reference_fasta = reference_fasta,
+        reference_index = reference_index,
+        regions_list = primary_contigs_list,
         part2_threads = scramble_part2_threads,
         scramble_docker = select_first([scramble_docker]),
         runtime_attr_scramble_part1 = runtime_attr_scramble_part1,

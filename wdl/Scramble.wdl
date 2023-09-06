@@ -14,6 +14,8 @@ workflow Scramble {
     File bam_or_cram_index
     String sample_name
     File reference_fasta
+    File reference_index
+    File regions_list
     String scramble_docker
     Int? part2_threads
     RuntimeAttr? runtime_attr_scramble_part1
@@ -33,7 +35,9 @@ workflow Scramble {
       bam_or_cram_file = bam_or_cram_file,
       bam_or_cram_index = bam_or_cram_index,
       sample_name = sample_name,
+      regions_list = regions_list,
       reference_fasta = reference_fasta,
+      reference_index = reference_index,
       scramble_docker = scramble_docker,
       runtime_attr_override = runtime_attr_scramble_part1
   }
@@ -59,7 +63,9 @@ task ScramblePart1 {
     File bam_or_cram_file
     File bam_or_cram_index
     String sample_name
+    File regions_list
     File reference_fasta
+    File reference_index
     String scramble_docker
     RuntimeAttr? runtime_attr_override
   }
@@ -91,8 +97,10 @@ task ScramblePart1 {
     cat ~{reference_fasta} | makeblastdb -in - -parse_seqids -title ref -dbtype nucl -out ref
 
     # Identify clusters of split reads
-    $scrambleDir/cluster_identifier/src/build/cluster_identifier ~{bam_or_cram_file} \
-      | gzip > ~{sample_name}.scramble_clusters.tsv.gz
+    while read region; do
+      $scrambleDir/cluster_identifier/src/build/cluster_identifier -l -r "${region}" -t ~{reference_fasta} ~{bam_or_cram_file} \
+        | gzip >> ~{sample_name}.scramble_clusters.tsv.gz
+    done < ~{regions_list}
   >>>
   runtime {
     cpu: select_first([runtime_attr.cpu_cores, default_attr.cpu_cores])
