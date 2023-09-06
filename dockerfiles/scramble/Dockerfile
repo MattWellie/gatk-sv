@@ -54,16 +54,18 @@ RUN mkdir -p /opt && cd /opt && \
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # install scramble
+ARG SCRAMBLE_COMMIT="524799b704abea44a143234591e1d7e68084911b"
 RUN mkdir /app && cd /app \
     && git clone https://github.com/mwalker174/scramble-gatk-sv.git \
     && cd scramble-gatk-sv \
-    && git checkout dc1afd7f825d188e8ad8caa12e998a591ad70a88 \
+    && git checkout ${SCRAMBLE_COMMIT} \
     && cd cluster_identifier/src \
     && make \
     && ln -s /app/scramble-gatk-sv/cluster_identifier/src/build/cluster_identifier /usr/local/bin
 
-# test; note that cluster_identifier has no help command currently
+# test
 RUN Rscript --vanilla /app/scramble-gatk-sv/cluster_analysis/bin/SCRAMble.R --help
+RUN Rscript --vanilla /app/scramble-gatk-sv/cluster_analysis/bin/cluster_identifier -v
 
 # define default command
 CMD ["Rscript"]
