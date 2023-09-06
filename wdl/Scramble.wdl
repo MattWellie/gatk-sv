@@ -88,17 +88,9 @@ task ScramblePart1 {
   command <<<
     set -euo pipefail
 
-    xDir=$PWD
-    clusterFile=$xDir/clusters
-    scrambleDir="/app/scramble-gatk-sv"
-    meiRef=$scrambleDir/cluster_analysis/resources/MEI_consensus_seqs.fa
-
-    # create a blast db from the reference
-    cat ~{reference_fasta} | makeblastdb -in - -parse_seqids -title ref -dbtype nucl -out ref
-
     # Identify clusters of split reads
     while read region; do
-      $scrambleDir/cluster_identifier/src/build/cluster_identifier -l -r "${region}" -t ~{reference_fasta} ~{bam_or_cram_file} \
+      time /app/scramble-gatk-sv/cluster_identifier/src/build/cluster_identifier -l -r "${region}" -t ~{reference_fasta} ~{bam_or_cram_file} \
         | gzip >> ~{sample_name}.scramble_clusters.tsv.gz
     done < ~{regions_list}
   >>>
